@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PACTUM — Soluções Contratuais · Clareza que fecha negócios</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --forest:  #1C2B1A;
+  --deep:    #141F13;
+  --moss:    #2D4A28;
+  --sage:    #4A7042;
+  --leaf:    #6B9E5E;
+  --cream:   #F5F0E8;
+  --warm:    #EDE5D4;
+  --parch:   #E4D9C4;
+  --ink:     #0F1A0E;
+  --gold:    #C4A862;
+  --gold-lt: #D4BC7A;
+  --gold-dim:rgba(196,168,98,0.15);
+  --muted:   rgba(245,240,232,0.5);
+  --muted2:  rgba(245,240,232,0.25);
+  --border:  rgba(245,240,232,0.12);
+  --border2: rgba(196,168,98,0.2);
+}
+
+html{scroll-behavior:smooth;}
+
+/* PEN CURSOR */
+*{cursor:none!important;}
+#pen{
+  position:fixed;z-index:9999;pointer-events:none;
+  transform:translate(-4px,-28px);
+  font-size:28px;line-height:1;
+  transition:transform .1s ease;
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,.3));
+}
+#pen-ink{
+  position:fixed;z-index:9998;pointer-events:none;
+  width:4px;height:4px;border-radius:50%;
+  background:var(--gold);transform:translate(-2px,-2px);
+  transition:width .2s,height .2s,opacity .2s;
+  box-shadow:0 0 8px var(--gold);
+}
+
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--cream);color:var(--forest);
+  overflow-x:hidden;
+}
+
+/* PARCHMENT TEXTURE */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  opacity:.04;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:220px;
+}
+
+/* DOCUMENT LINES background */
+.doc-lines{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:repeating-linear-gradient(
+    transparent 0px, transparent 31px,
+    rgba(196,168,98,0.06) 31px, rgba(196,168,98,0.06) 32px
+  );
+  background-size:100% 32px;
+}
+
+/* ══ NAV ══ */
+nav{
+  position:fixed;top:0;width:100%;z-index:500;height:68px;
+  padding:0 64px;display:flex;align-items:center;justify-content:space-between;
+  transition:all .4s;
+}
+nav.scrolled{
+  background:rgba(245,240,232,.96);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(196,168,98,.2);
+  box-shadow:0 1px 24px rgba(28,43,26,.06);
+}
+.nav-logo{
+  display:flex;flex-direction:column;text-decoration:none;line-height:1;
+  font-family:'DM Serif Display',serif;
+}
+.nav-logo-name{font-size:22px;font-weight:400;letter-spacing:4px;color:var(--forest);}
+.nav-logo-name span{color:var(--gold);}
+.nav-logo-tag{font-size:7.5px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:rgba(28,43,26,.4);font-family:'DM Sans',sans-serif;margin-top:3px;}
+.nav-links{display:flex;gap:36px;list-style:none;align-items:center;}
+.nav-links a{font-size:10.5px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:rgba(28,43,26,.5);text-decoration:none;transition:color .2s;}
+.nav-links a:hover{color:var(--forest);}
+.nav-cta{
+  background:var(--forest);color:var(--cream);
+  padding:10px 24px;border-radius:1px;
+  font-family:'DM Sans',sans-serif;font-size:10.5px;font-weight:600;
+  letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;
+  display:flex;align-items:center;gap:8px;transition:all .25s;
+  border:1.5px solid var(--forest);
+}
+.nav-cta:hover{background:transparent;color:var(--forest);}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;padding:6px;}
+.hamburger span{display:block;width:22px;height:1.5px;background:var(--forest);}
+.mob-menu{position:fixed;inset:0;z-index:600;background:var(--cream);display:flex;flex-direction:column;justify-content:center;padding:60px 40px;transform:translateX(100%);transition:transform .45s cubic-bezier(.4,0,.2,1);}
+.mob-menu.open{transform:translateX(0);}
+.mob-close{position:absolute;top:28px;right:28px;background:none;border:none;font-size:26px;color:var(--forest);}
+.mob-menu a{font-family:'DM Serif Display',serif;font-size:clamp(38px,8vw,58px);color:rgba(28,43,26,.4);text-decoration:none;padding:10px 0;border-bottom:1px solid rgba(196,168,98,.2);display:block;transition:color .2s,padding-left .2s;}
+.mob-menu a:hover{color:var(--forest);padding-left:10px;}
+
+/* ══ HERO — O CONTRATO ══ */
+.hero{
+  min-height:100vh;padding:0;
+  display:grid;grid-template-columns:1fr 1fr;
+  position:relative;overflow:hidden;
+}
+/* Left: dark forest panel */
+.hero-dark{
+  background:var(--forest);
+  padding:130px 72px 90px;
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;overflow:hidden;
+  z-index:2;
+}
+.hero-dark::after{
+  content:'';position:absolute;right:0;top:0;bottom:0;width:1px;
+  background:linear-gradient(to bottom,transparent,var(--gold),transparent);
+}
+/* Watermark P */
+.hero-p-mark{
+  position:absolute;right:-40px;bottom:-80px;
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(200px,28vw,420px);font-style:italic;
+  color:rgba(245,240,232,.025);line-height:1;
+  pointer-events:none;user-select:none;
+}
+/* Right: parchment document */
+.hero-doc{
+  background:var(--warm);
+  position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  padding:80px 52px;
+}
+.hero-doc-lines{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:repeating-linear-gradient(transparent 0px,transparent 31px,rgba(196,168,98,.12) 31px,rgba(196,168,98,.12) 32px);
+}
+/* The fake contract document */
+.contract-doc{
+  background:#fff;
+  border:1px solid rgba(196,168,98,.3);
+  box-shadow:0 8px 48px rgba(28,43,26,.12),0 2px 8px rgba(28,43,26,.06);
+  padding:44px 40px;
+  width:100%;max-width:420px;
+  position:relative;z-index:2;
+  animation:docFloat 6s ease-in-out infinite;
+}
+@keyframes docFloat{0%,100%{transform:translateY(0) rotate(-.3deg);}50%{transform:translateY(-10px) rotate(.3deg);}}
+/* Red tape stamp */
+.doc-stamp{
+  position:absolute;top:-14px;right:24px;
+  background:var(--forest);color:var(--cream);
+  padding:6px 16px;font-family:'DM Sans',sans-serif;
+  font-size:8.5px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  border-radius:1px;box-shadow:0 4px 16px rgba(28,43,26,.3);
+}
+.doc-header{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:24px;padding-bottom:18px;
+  border-bottom:2px solid var(--forest);
+}
+.doc-logo-txt{
+  font-family:'DM Serif Display',serif;
+  font-size:20px;letter-spacing:3px;color:var(--forest);
+}
+.doc-logo-txt span{color:var(--gold);}
+.doc-date{font-size:10px;font-weight:400;color:rgba(28,43,26,.4);text-align:right;line-height:1.6;}
+.doc-title{
+  font-family:'DM Serif Display',serif;font-style:italic;
+  font-size:15px;color:var(--forest);text-align:center;
+  margin-bottom:18px;letter-spacing:.5px;
+}
+.doc-clauses{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.doc-clause{display:flex;gap:10px;}
+.doc-clause-num{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--gold);flex-shrink:0;margin-top:2px;width:42px;}
+.doc-clause-text{font-size:10.5px;color:rgba(28,43,26,.65);line-height:1.6;}
+.doc-clause-text strong{color:var(--forest);font-weight:600;}
+/* Highlight clause */
+.doc-clause.highlight .doc-clause-text{
+  background:rgba(196,168,98,.12);padding:4px 8px;border-radius:1px;
+  border-left:2px solid var(--gold);color:var(--forest);
+}
+.doc-divider{border:none;border-top:1px dashed rgba(196,168,98,.4);margin:16px 0;}
+.doc-sigs{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:18px;}
+.doc-sig-line{border-top:1px solid rgba(28,43,26,.25);padding-top:8px;text-align:center;}
+.doc-sig-label{font-size:8.5px;color:rgba(28,43,26,.4);letter-spacing:1px;text-transform:uppercase;}
+/* Signature SVG drawn animation */
+.sig-svg{width:80px;height:30px;display:block;margin:4px auto 0;}
+.sig-path{
+  stroke:var(--forest);stroke-width:1.5;fill:none;stroke-linecap:round;
+  stroke-dasharray:120;stroke-dashoffset:120;
+  animation:drawSig 1.8s ease .8s forwards;
+}
+@keyframes drawSig{to{stroke-dashoffset:0;}}
+.doc-seal{
+  position:absolute;bottom:30px;right:30px;
+  width:60px;height:60px;border-radius:50%;
+  border:2px solid rgba(196,168,98,.4);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Serif Display',serif;font-size:9px;
+  color:rgba(196,168,98,.6);text-align:center;line-height:1.2;
+  letter-spacing:1px;text-transform:uppercase;
+  animation:rotateSeal 20s linear infinite;
+}
+@keyframes rotateSeal{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+
+/* Hero text */
+.hero-eyebrow{display:flex;align-items:center;gap:14px;margin-bottom:28px;animation:fadeUp .8s ease both;}
+.heyeline{width:28px;height:1px;background:var(--gold);}
+.heyetxt{font-size:9px;font-weight:600;letter-spacing:3.5px;text-transform:uppercase;color:var(--gold);}
+.hero-h1{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(46px,5vw,78px);font-weight:400;
+  line-height:1.0;margin-bottom:22px;color:var(--cream);
+  animation:fadeUp .8s ease .08s both;
+}
+.hero-h1 em{font-style:italic;color:var(--gold);}
+.hero-p{
+  font-size:15.5px;font-weight:300;line-height:1.9;
+  color:rgba(245,240,232,.6);max-width:420px;margin-bottom:40px;
+  animation:fadeUp .8s ease .16s both;
+}
+.hero-p strong{color:var(--cream);font-weight:500;}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:52px;animation:fadeUp .8s ease .24s both;}
+
+.btn-gold{
+  background:var(--gold);color:var(--forest);
+  padding:14px 30px;border-radius:1px;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;border:none;
+  text-decoration:none;display:inline-flex;align-items:center;gap:10px;
+  transition:all .25s;
+}
+.btn-gold:hover{background:var(--gold-lt);transform:translateY(-2px);box-shadow:0 10px 32px rgba(196,168,98,.3);}
+.btn-ghost-cream{
+  background:transparent;color:var(--cream);
+  padding:13px 30px;border-radius:1px;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;
+  letter-spacing:2px;text-transform:uppercase;border:1px solid rgba(245,240,232,.25);
+  text-decoration:none;display:inline-block;transition:all .25s;
+}
+.btn-ghost-cream:hover{border-color:var(--cream);}
+.btn-ghost-dark{
+  background:transparent;color:var(--forest);
+  padding:13px 30px;border-radius:1px;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;
+  letter-spacing:2px;text-transform:uppercase;border:1.5px solid rgba(28,43,26,.2);
+  text-decoration:none;display:inline-block;transition:all .25s;
+}
+.btn-ghost-dark:hover{border-color:var(--forest);}
+.btn-txt-gold{
+  background:transparent;color:var(--gold);
+  font-family:'DM Sans',sans-serif;font-size:10.5px;font-weight:600;
+  letter-spacing:2px;text-transform:uppercase;border:none;
+  text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+  border-bottom:1px solid rgba(196,168,98,.25);padding-bottom:2px;transition:all .2s;
+}
+.btn-txt-gold:hover{gap:14px;border-color:var(--gold);}
+.btn-txt-forest{
+  background:transparent;color:var(--forest);
+  font-family:'DM Sans',sans-serif;font-size:10.5px;font-weight:600;
+  letter-spacing:2px;text-transform:uppercase;border:none;
+  text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+  border-bottom:1px solid rgba(28,43,26,.2);padding-bottom:2px;transition:all .2s;
+}
+.btn-txt-forest:hover{gap:14px;border-color:var(--forest);}
+
+.hero-stats{display:flex;gap:0;border:1px solid rgba(245,240,232,.15);border-radius:1px;overflow:hidden;width:fit-content;animation:fadeUp .8s ease .32s both;}
+.hs{padding:14px 22px;border-right:1px solid rgba(245,240,232,.1);}
+.hs:last-child{border-right:none;}
+.hs-val{font-family:'DM Serif Display',serif;font-size:28px;line-height:1;color:var(--gold);}
+.hs-val sup{font-size:13px;}
+.hs-lbl{font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);margin-top:4px;}
+
+/* ══ TICKER ══ */
+.ticker{background:var(--forest);padding:13px 0;overflow:hidden;position:relative;z-index:10;}
+.ticker-inner{display:flex;animation:ticker 42s linear infinite;width:max-content;}
+.t-item{display:flex;align-items:center;gap:18px;padding:0 32px;white-space:nowrap;font-family:'DM Sans',sans-serif;font-size:9.5px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:rgba(245,240,232,.55);}
+.t-sep{color:var(--gold);font-size:8px;}
+
+/* ══ SECTIONS ══ */
+section{padding:110px 72px;position:relative;z-index:1;}
+.s-eye{font-size:9px;font-weight:600;letter-spacing:3.5px;text-transform:uppercase;color:var(--sage);display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+.s-eye::before{content:'';width:24px;height:1px;background:var(--sage);flex-shrink:0;}
+.s-eye.light{color:var(--gold);}
+.s-eye.light::before{background:var(--gold);}
+.s-h{font-family:'DM Serif Display',serif;font-size:clamp(34px,3.8vw,56px);font-weight:400;line-height:1.08;margin-bottom:18px;}
+.s-h em{font-style:italic;color:var(--sage);}
+.s-h.light em{color:var(--gold);}
+.s-p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(28,43,26,.55);max-width:520px;}
+.s-p.light{color:rgba(245,240,232,.55);}
+
+/* ══ INTERACTIVE CLAUSE BUILDER ══ */
+.sec-clausulas{background:var(--warm);padding:0;overflow:hidden;}
+.clausulas-wrap{display:grid;grid-template-columns:1fr 1fr;min-height:700px;}
+.cl-left{
+  padding:100px 72px;display:flex;flex-direction:column;justify-content:center;
+  background:var(--forest);border-right:1px solid rgba(196,168,98,.2);
+  position:relative;overflow:hidden;
+}
+.cl-left::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 60% at 80% 20%,rgba(107,158,94,.08) 0%,transparent 65%);
+}
+.cl-left-c{position:relative;z-index:1;}
+/* Clause accordion */
+.clause-acc{margin-top:44px;display:flex;flex-direction:column;gap:0;}
+.clause-item{border-bottom:1px solid rgba(245,240,232,.1);}
+.clause-btn{
+  width:100%;background:none;border:none;display:flex;justify-content:space-between;
+  align-items:center;gap:16px;padding:20px 0;text-align:left;transition:all .2s;
+}
+.clause-btn:hover .clause-btn-title{color:var(--gold);}
+.clause-btn-left{display:flex;gap:14px;align-items:center;}
+.clause-num{font-family:'DM Serif Display',serif;font-size:13px;font-style:italic;color:rgba(245,240,232,.2);width:28px;flex-shrink:0;}
+.clause-btn-title{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400;color:var(--cream);transition:color .2s;}
+.clause-arrow{color:var(--gold);font-size:18px;transition:transform .3s;flex-shrink:0;}
+.clause-item.open .clause-arrow{transform:rotate(45deg);}
+.clause-body{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .4s;}
+.clause-item.open .clause-body{max-height:200px;padding-bottom:18px;}
+.clause-body-text{font-size:13px;font-weight:300;line-height:1.8;color:rgba(245,240,232,.5);padding-left:42px;}
+/* Preview doc on right */
+.cl-right{
+  background:var(--warm);padding:80px 60px;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.cl-right-lines{position:absolute;inset:0;background-image:repeating-linear-gradient(transparent 0px,transparent 31px,rgba(196,168,98,.1) 31px,rgba(196,168,98,.1) 32px);}
+.mini-contract{
+  background:#fff;border:1px solid rgba(196,168,98,.25);
+  box-shadow:0 12px 52px rgba(28,43,26,.1);
+  padding:36px 32px;width:100%;max-width:380px;position:relative;z-index:2;
+}
+.mc-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-bottom:14px;border-bottom:1.5px solid var(--forest);margin-bottom:18px;
+}
+.mc-logo{font-family:'DM Serif Display',serif;font-size:16px;letter-spacing:3px;color:var(--forest);}
+.mc-logo span{color:var(--gold);}
+.mc-num{font-size:9px;color:rgba(28,43,26,.3);letter-spacing:1px;font-family:'DM Sans',sans-serif;}
+.mc-title{font-family:'DM Serif Display',serif;font-style:italic;font-size:13px;color:var(--forest);text-align:center;margin-bottom:16px;}
+/* Dynamic clauses in mini contract */
+.mc-clauses{display:flex;flex-direction:column;gap:8px;min-height:180px;}
+.mc-clause{
+  display:flex;gap:8px;padding:6px 8px;
+  border-radius:1px;background:rgba(245,240,232,.5);
+  border-left:2px solid rgba(196,168,98,.3);
+  animation:clauseIn .35s ease both;
+  font-size:9.5px;color:rgba(28,43,26,.6);line-height:1.55;
+}
+@keyframes clauseIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.mc-clause.active{background:rgba(107,158,94,.08);border-color:var(--sage);}
+.mc-clause-n{color:var(--gold);font-weight:700;flex-shrink:0;font-family:'DM Serif Display',serif;font-style:italic;}
+.mc-sig-area{
+  margin-top:18px;padding-top:14px;
+  border-top:1px dashed rgba(196,168,98,.4);
+  display:flex;justify-content:space-between;align-items:flex-end;
+}
+.mc-sig-block{text-align:center;}
+.mc-sig-line{width:90px;border-top:1px solid rgba(28,43,26,.2);margin:0 auto 4px;}
+.mc-sig-lbl{font-size:8px;color:rgba(28,43,26,.35);letter-spacing:1px;text-transform:uppercase;}
+/* Status badge */
+.mc-status{
+  position:absolute;top:-12px;right:20px;
+  font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  padding:5px 12px;border-radius:1px;transition:all .3s;
+}
+.mc-status.draft{background:rgba(196,168,98,.15);color:var(--gold);border:1px solid rgba(196,168,98,.3);}
+.mc-status.ready{background:rgba(107,158,94,.12);color:var(--sage);border:1px solid rgba(107,158,94,.25);}
+
+/* ══ POR QUE NOS ══ */
+.sec-porque{background:var(--cream);}
+.porq-head{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:end;margin-bottom:72px;}
+.porq-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(196,168,98,.2);border:1px solid rgba(196,168,98,.2);}
+.porq-card{
+  background:var(--cream);padding:40px 34px;
+  position:relative;overflow:hidden;transition:background .3s;
+}
+.porq-card::before{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--sage),transparent);
+  opacity:0;transition:opacity .4s;
+}
+.porq-card:hover{background:var(--warm);}
+.porq-card:hover::before{opacity:1;}
+.porq-ico{font-size:32px;margin-bottom:16px;display:block;}
+.porq-num{font-family:'DM Serif Display',serif;font-style:italic;font-size:48px;color:rgba(196,168,98,.2);line-height:1;margin-bottom:12px;}
+.porq-title{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;line-height:1.2;margin-bottom:10px;}
+.porq-desc{font-size:13px;font-weight:300;color:rgba(28,43,26,.55);line-height:1.8;}
+
+/* ══ SERVIÇOS — COMO CLÁUSULAS ══ */
+.sec-servicos{background:var(--forest);padding:0;overflow:hidden;}
+.servicos-wrap{display:grid;grid-template-columns:1fr 2fr;}
+.serv-left{
+  background:var(--deep);padding:100px 64px;
+  display:flex;flex-direction:column;justify-content:center;
+  border-right:1px solid rgba(196,168,98,.15);
+}
+.serv-right{padding:100px 72px;display:flex;flex-direction:column;justify-content:center;}
+/* Contract-style service list */
+.serv-contract{
+  background:rgba(245,240,232,.03);border:1px solid rgba(245,240,232,.1);
+  padding:0;
+}
+.serv-contract-header{
+  padding:18px 28px;border-bottom:1px solid rgba(245,240,232,.1);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.sch-title{font-family:'DM Serif Display',serif;font-style:italic;font-size:14px;color:rgba(245,240,232,.5);letter-spacing:.5px;}
+.sch-num{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(196,168,98,.5);}
+.serv-item{
+  display:flex;gap:0;border-bottom:1px solid rgba(245,240,232,.07);
+  transition:background .25s;
+}
+.serv-item:last-child{border-bottom:none;}
+.serv-item:hover{background:rgba(245,240,232,.02);}
+.serv-art{
+  padding:20px 22px 20px 28px;
+  font-family:'DM Serif Display',serif;font-style:italic;
+  font-size:11px;color:rgba(196,168,98,.5);
+  border-right:1px solid rgba(245,240,232,.07);
+  display:flex;align-items:flex-start;min-width:70px;flex-shrink:0;
+}
+.serv-content{padding:20px 28px;flex:1;}
+.serv-title{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;color:var(--cream);margin-bottom:6px;}
+.serv-desc{font-size:12.5px;font-weight:300;color:rgba(245,240,232,.45);line-height:1.75;margin-bottom:10px;}
+.serv-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.serv-tag{font-size:8.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:1px;background:rgba(196,168,98,.08);color:rgba(196,168,98,.7);border:1px solid rgba(196,168,98,.15);}
+
+/* ══ RISCO/DIAGNÓSTICO ══ */
+.sec-risco{background:var(--warm);padding:0;overflow:hidden;}
+.risco-split{display:grid;grid-template-columns:1fr 1fr;min-height:580px;}
+.risco-left{
+  padding:100px 72px;display:flex;flex-direction:column;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.risco-left::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 50% 60% at 20% 50%,rgba(107,158,94,.06) 0%,transparent 65%);
+}
+.risco-left-c{position:relative;z-index:1;}
+/* Risk meter interactive */
+.risk-meter{
+  margin-top:40px;background:#fff;border:1px solid rgba(196,168,98,.25);
+  padding:28px;box-shadow:0 6px 24px rgba(28,43,26,.06);
+}
+.rm-title{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(28,43,26,.4);margin-bottom:20px;}
+.risk-items{display:flex;flex-direction:column;gap:14px;}
+.risk-row{display:flex;flex-direction:column;gap:6px;}
+.risk-row-head{display:flex;justify-content:space-between;}
+.risk-label{font-size:12px;font-weight:500;color:var(--forest);}
+.risk-pct{font-size:11px;font-weight:700;color:var(--sage);}
+.risk-bar{height:4px;background:rgba(28,43,26,.08);border-radius:2px;overflow:hidden;}
+.risk-fill{height:100%;border-radius:2px;transition:width 1.5s ease;}
+.rf-high{background:linear-gradient(90deg,#c0392b,#e74c3c);}
+.rf-mid{background:linear-gradient(90deg,var(--gold),var(--gold-lt));}
+.rf-low{background:linear-gradient(90deg,var(--sage),var(--leaf));}
+/* Risk verdict */
+.risk-verdict{
+  margin-top:18px;padding:14px 16px;
+  background:rgba(196,168,98,.08);border-left:3px solid var(--gold);
+  font-size:11.5px;font-weight:400;color:var(--forest);line-height:1.65;font-style:italic;
+}
+.risco-right{
+  padding:100px 72px;display:flex;flex-direction:column;justify-content:center;
+  border-left:1px solid rgba(196,168,98,.2);
+  background:var(--cream);
+}
+.risk-checks{display:flex;flex-direction:column;gap:0;margin-top:40px;}
+.rc-item{
+  display:flex;gap:18px;padding:20px 0;border-bottom:1px solid rgba(196,168,98,.15);
+  transition:padding-left .25s;
+}
+.rc-item:hover{padding-left:6px;}
+.rc-icon{
+  width:36px;height:36px;flex-shrink:0;border-radius:1px;
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+  transition:background .25s;
+}
+.rc-icon.danger{background:rgba(199,63,63,.1);border:1px solid rgba(199,63,63,.2);}
+.rc-icon.warn{background:rgba(196,168,98,.1);border:1px solid rgba(196,168,98,.2);}
+.rc-icon.safe{background:rgba(107,158,94,.1);border:1px solid rgba(107,158,94,.2);}
+.rc-title{font-family:'DM Serif Display',serif;font-size:17px;font-weight:400;margin-bottom:5px;}
+.rc-desc{font-size:12px;font-weight:300;color:rgba(28,43,26,.55);line-height:1.7;}
+
+/* ══ QUEM SOMOS ══ */
+.sec-quem{background:var(--cream);}
+.quem-grid{display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:center;}
+.quem-visual{position:relative;}
+.quem-frame{
+  background:var(--warm);border:1px solid rgba(196,168,98,.25);
+  aspect-ratio:3/4;display:flex;align-items:flex-end;
+  position:relative;overflow:hidden;
+  box-shadow:0 16px 64px rgba(28,43,26,.1);
+}
+.qf-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 30%,rgba(107,158,94,.06) 0%,transparent 65%);}
+.qf-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
+.qf-placeholder{font-size:68px;opacity:.2;}
+.qf-lbl{font-size:9.5px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:rgba(28,43,26,.3);}
+.qf-bottom{
+  position:absolute;bottom:0;left:0;right:0;z-index:2;
+  background:linear-gradient(to top,rgba(28,43,26,.95) 0%,transparent 100%);
+  padding:28px;
+}
+.qf-name{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;color:var(--cream);margin-bottom:4px;}
+.qf-role{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
+/* Bracket accents */
+.quem-visual::before{content:'';position:absolute;top:-14px;left:-14px;width:38px;height:38px;border-top:1.5px solid var(--gold);border-left:1.5px solid var(--gold);z-index:3;}
+.quem-visual::after{content:'';position:absolute;bottom:-14px;right:-14px;width:38px;height:38px;border-bottom:1.5px solid var(--gold);border-right:1.5px solid var(--gold);z-index:3;}
+/* Years badge */
+.years-badge{
+  position:absolute;bottom:60px;left:-24px;z-index:4;
+  background:var(--forest);color:var(--cream);padding:16px 20px;
+  box-shadow:0 8px 32px rgba(28,43,26,.3);text-align:center;
+}
+.yb-val{font-family:'DM Serif Display',serif;font-size:36px;line-height:1;color:var(--gold);}
+.yb-lbl{font-size:8px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,.45);margin-top:3px;}
+
+/* Manifesto text */
+.manifesto{
+  font-family:'DM Serif Display',serif;font-style:italic;
+  font-size:clamp(22px,2.5vw,32px);line-height:1.5;color:var(--forest);
+  margin-bottom:32px;
+  border-left:3px solid var(--gold);padding-left:24px;
+}
+.values-list{display:flex;flex-direction:column;gap:0;margin-top:36px;}
+.val-item{display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(196,168,98,.15);transition:padding-left .25s;}
+.val-item:hover{padding-left:6px;}
+.val-ico{font-size:20px;flex-shrink:0;margin-top:2px;}
+.val-title{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400;margin-bottom:4px;}
+.val-desc{font-size:12.5px;font-weight:300;color:rgba(28,43,26,.55);line-height:1.7;}
+
+/* ══ DEPOIMENTOS ══ */
+.sec-dep{background:var(--forest);}
+.dep-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:20px;margin-bottom:60px;}
+.dep-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(245,240,232,.08);}
+.dep-card{
+  background:var(--deep);padding:38px 32px;
+  position:relative;overflow:hidden;transition:background .3s;
+}
+.dep-card::before{
+  content:'"';font-family:'DM Serif Display',serif;font-style:italic;
+  font-size:120px;color:rgba(196,168,98,.05);
+  position:absolute;top:-10px;left:16px;line-height:1;pointer-events:none;
+}
+.dep-card:hover{background:rgba(245,240,232,.02);}
+.dep-text{
+  font-family:'DM Serif Display',serif;font-style:italic;
+  font-size:18px;font-weight:400;line-height:1.7;color:var(--cream);margin-bottom:26px;
+  position:relative;z-index:1;
+}
+.dep-author{display:flex;gap:14px;align-items:center;padding-top:18px;border-top:1px solid rgba(245,240,232,.08);}
+.dep-init{
+  width:40px;height:40px;border-radius:1px;
+  background:rgba(196,168,98,.12);border:1px solid rgba(196,168,98,.25);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Serif Display',serif;font-style:italic;font-size:18px;color:var(--gold);flex-shrink:0;
+}
+.dep-name{font-family:'DM Serif Display',serif;font-size:16px;font-weight:400;color:var(--cream);}
+.dep-role{font-size:10px;font-weight:300;color:rgba(245,240,232,.35);margin-top:3px;}
+
+/* ══ FAQ ══ */
+.sec-faq{background:var(--warm);}
+.faq-layout{display:grid;grid-template-columns:1fr 2fr;gap:80px;}
+.faq-items{display:flex;flex-direction:column;}
+.faq-item{border-bottom:1px solid rgba(196,168,98,.2);}
+.faq-q{
+  width:100%;background:none;border:none;display:flex;justify-content:space-between;
+  align-items:center;gap:20px;padding:20px 0;text-align:left;
+  font-family:'DM Serif Display',serif;font-size:18px;font-weight:400;color:var(--forest);
+  transition:color .2s;
+}
+.faq-q:hover{color:var(--sage);}
+.faq-icon{
+  width:28px;height:28px;flex-shrink:0;border:1px solid rgba(196,168,98,.3);border-radius:1px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  color:var(--gold);transition:transform .3s,background .3s;font-family:'DM Sans',sans-serif;
+}
+.faq-item.open .faq-icon{transform:rotate(45deg);background:var(--forest);color:var(--cream);border-color:var(--forest);}
+.faq-a{max-height:0;overflow:hidden;font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(28,43,26,.55);transition:max-height .4s ease,padding .4s;}
+.faq-item.open .faq-a{max-height:200px;padding-bottom:20px;}
+
+/* ══ CONTATO ══ */
+.sec-contato{background:var(--forest);padding:0;overflow:hidden;}
+.contato-wrap{display:grid;grid-template-columns:1fr 1fr;min-height:600px;}
+.cont-left{
+  padding:100px 72px;display:flex;flex-direction:column;justify-content:center;
+  border-right:1px solid rgba(245,240,232,.08);position:relative;overflow:hidden;
+}
+.cont-left::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 55% 50% at 15% 50%,rgba(107,158,94,.07) 0%,transparent 65%);
+}
+.cont-left-c{position:relative;z-index:1;}
+.cont-infos{margin-top:36px;display:flex;flex-direction:column;gap:20px;}
+.c-info{display:flex;gap:16px;align-items:flex-start;}
+.c-ico{font-size:18px;flex-shrink:0;margin-top:1px;}
+.c-lbl{font-size:9px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:rgba(245,240,232,.25);margin-bottom:3px;}
+.c-val{font-size:14px;font-weight:400;color:var(--cream);line-height:1.6;}
+.cont-right{padding:100px 72px;display:flex;flex-direction:column;justify-content:center;}
+/* Contract-style form */
+.c-form-wrap{
+  background:rgba(245,240,232,.03);border:1px solid rgba(245,240,232,.1);
+  padding:36px 32px;
+}
+.c-form-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-bottom:16px;border-bottom:1px solid rgba(245,240,232,.1);margin-bottom:28px;
+}
+.cfh-title{font-family:'DM Serif Display',serif;font-style:italic;font-size:14px;color:rgba(245,240,232,.5);}
+.cfh-date{font-size:9px;font-weight:400;color:rgba(245,240,232,.25);letter-spacing:.5px;}
+.c-form{display:flex;flex-direction:column;gap:14px;}
+.c-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.c-group{display:flex;flex-direction:column;gap:6px;}
+.c-flbl{font-size:9px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:rgba(245,240,232,.25);}
+.c-inp,.c-sel,.c-ta{
+  background:rgba(245,240,232,.04);border:1px solid rgba(245,240,232,.1);
+  padding:12px 16px;font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:300;
+  color:var(--cream);outline:none;transition:border-color .25s;-webkit-appearance:none;border-radius:0;
+}
+.c-inp::placeholder,.c-ta::placeholder{color:rgba(245,240,232,.2);}
+.c-inp:focus,.c-ta:focus{border-color:var(--gold);}
+.c-ta{resize:vertical;min-height:96px;}
+.c-sel{color:rgba(245,240,232,.5);cursor:pointer;}
+.c-sel option{background:var(--forest);color:var(--cream);}
+.c-btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;}
+.c-sub{
+  background:var(--gold);color:var(--forest);padding:13px 26px;border:none;
+  font-family:'DM Sans',sans-serif;font-size:10.5px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;transition:all .25s;cursor:pointer;
+}
+.c-sub:hover{background:var(--gold-lt);transform:translateY(-2px);box-shadow:0 8px 24px rgba(196,168,98,.3);}
+.c-wa{
+  display:flex;align-items:center;gap:8px;background:#25D366;color:#fff;
+  padding:13px 22px;font-family:'DM Sans',sans-serif;font-size:10.5px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;text-decoration:none;transition:all .25s;
+}
+.c-wa:hover{background:#1db954;transform:translateY(-2px);}
+
+/* ══ CTA FINAL ══ */
+.sec-cta{
+  background:var(--cream);padding:130px 80px;
+  text-align:center;position:relative;overflow:hidden;
+}
+.sec-cta::before{
+  content:'PACTUM';
+  font-family:'DM Serif Display',serif;font-style:italic;
+  font-size:clamp(80px,14vw,200px);font-weight:400;
+  color:rgba(196,168,98,.06);
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  white-space:nowrap;pointer-events:none;letter-spacing:8px;
+}
+.sec-cta>*{position:relative;z-index:1;}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:48px;}
+
+/* FOOTER */
+footer{
+  background:var(--deep);padding:52px 72px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid rgba(196,168,98,.12);position:relative;z-index:1;
+}
+.fl{font-family:'DM Serif Display',serif;font-size:18px;letter-spacing:2.5px;color:rgba(245,240,232,.4);}
+.fl span{color:var(--gold);}
+.fl small{display:block;font-size:7px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:rgba(245,240,232,.18);font-family:'DM Sans',sans-serif;margin-top:4px;}
+.fl-copy{font-size:11px;color:rgba(245,240,232,.2);text-align:center;line-height:1.7;}
+.fl-nav{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+.fl-nav a{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(245,240,232,.22);text-decoration:none;transition:color .2s;}
+.fl-nav a:hover{color:rgba(245,240,232,.6);}
+
+/* WA FLOAT */
+.wa-float{
+  position:fixed;bottom:32px;right:32px;z-index:400;
+  width:52px;height:52px;border-radius:1px;background:#25D366;
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+  text-decoration:none;box-shadow:0 6px 24px rgba(37,211,102,.3);transition:all .25s;
+}
+.wa-float:hover{transform:scale(1.08) translateY(-2px);box-shadow:0 12px 32px rgba(37,211,102,.5);}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+@keyframes ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.v{opacity:1;transform:translateY(0);}
+.r1{transition-delay:.05s}.r2{transition-delay:.13s}.r3{transition-delay:.21s}.r4{transition-delay:.29s}
+
+/* RESPONSIVE */
+@media(max-width:1100px){
+  nav{padding:0 28px;}
+  .nav-links,.nav-cta{display:none;}
+  .hamburger{display:flex;}
+  section{padding:80px 28px;}
+  .hero{grid-template-columns:1fr;}
+  .hero-dark{padding:120px 28px 60px;}
+  .hero-doc{min-height:420px;padding:52px 28px;}
+  .clausulas-wrap,.servicos-wrap,.risco-split,.quem-grid,.contato-wrap{grid-template-columns:1fr;}
+  .cl-left,.cl-right,.serv-left,.serv-right,.risco-left,.risco-right,.cont-left,.cont-right{padding:64px 28px;}
+  .porq-head{grid-template-columns:1fr;gap:24px;}
+  .porq-grid{grid-template-columns:1fr 1fr;}
+  .dep-grid{grid-template-columns:1fr;}
+  .faq-layout{grid-template-columns:1fr;gap:40px;}
+  .sec-cta{padding:80px 28px;}
+  footer{flex-direction:column;gap:22px;text-align:center;padding:40px 28px;}
+  .fl-nav{align-items:center;flex-direction:row;flex-wrap:wrap;justify-content:center;}
+}
+@media(max-width:640px){
+  nav{padding:0 20px;}
+  section{padding:60px 20px;}
+  .hero-dark{padding:110px 20px 52px;}
+  .porq-grid{grid-template-columns:1fr;}
+  .c-row{grid-template-columns:1fr;}
+  .hero-btns,.cta-btns{flex-direction:column;align-items:flex-start;}
+  .cta-btns{align-items:center;}
+  .years-badge{display:none;}
+  footer{padding:32px 20px;}
+  .wa-float{bottom:20px;right:20px;}
+}
+</style>
+</head>
+<body>
+<div class="doc-lines"></div>
+
+<!-- PEN CURSOR -->
+<div id="pen">🖊️</div>
+<div id="pen-ink"></div>
+
+<a href="https://wa.me/5561994511685?text=Olá!%20Preciso%20de%20ajuda%20com%20um%20contrato." target="_blank" class="wa-float">💬</a>
+
+<!-- MOBILE MENU -->
+<div class="mob-menu" id="mob">
+  <button class="mob-close" onclick="closeMob()">✕</button>
+  <a href="#clausulas" onclick="closeMob()">O que fazemos</a>
+  <a href="#servicos" onclick="closeMob()">Serviços</a>
+  <a href="#quem" onclick="closeMob()">Quem somos</a>
+  <a href="#depoimentos" onclick="closeMob()">Clientes</a>
+  <a href="#contato" onclick="closeMob()">Contato</a>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#top" class="nav-logo"><span class="nav-logo-name">PACTUM<span>.</span></span><span class="nav-logo-tag">Soluções Contratuais</span></a>
+  <ul class="nav-links">
+    <li><a href="#clausulas">O que fazemos</a></li>
+    <li><a href="#servicos">Serviços</a></li>
+    <li><a href="#quem">Quem somos</a></li>
+    <li><a href="#depoimentos">Clientes</a></li>
+    <li><a href="#contato">Contato</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="#contato" class="nav-cta">Quero um contrato ✍️</a>
+    <button class="hamburger" onclick="openMob()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<div class="hero" id="top">
+  <div class="hero-dark">
+    <span class="hero-p-mark">P</span>
+    <div class="hero-eyebrow"><div class="heyeline"></div><div class="heyetxt">Soluções Contratuais</div></div>
+    <h1 class="hero-h1">Contratos que<br>protegem.<br><em>Não prendem.</em></h1>
+    <p class="hero-p">
+      A maioria dos problemas nos negócios começa com um contrato mal feito — ou inexistente. A <strong>PACTUM</strong> transforma juridiquês em clareza, burocracia em confiança, e risco em crescimento.
+    </p>
+    <div class="hero-btns">
+      <a href="#contato" class="btn-gold">Preciso de um contrato ✍️</a>
+      <a href="#clausulas" class="btn-ghost-cream">Ver como funciona</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hs"><div class="hs-val">100<sup>+</sup></div><div class="hs-lbl">contratos feitos</div></div>
+      <div class="hs"><div class="hs-val">3</div><div class="hs-lbl">pilares</div></div>
+      <div class="hs"><div class="hs-val">0</div><div class="hs-lbl">juridiquês</div></div>
+    </div>
+  </div>
+
+  <!-- O CONTRATO ANIMADO -->
+  <div class="hero-doc">
+    <div class="hero-doc-lines"></div>
+    <div class="contract-doc">
+      <div class="doc-stamp">✓ ATIVO</div>
+      <div class="doc-header">
+        <div>
+          <div class="doc-logo-txt">PACTUM<span>.</span></div>
+          <div style="font-size:8.5px;color:rgba(28,43,26,.35);margin-top:3px;font-family:'DM Sans',sans-serif;letter-spacing:.5px;">Soluções Contratuais</div>
+        </div>
+        <div class="doc-date">
+          <div>Contrato nº 2025/001</div>
+          <div id="heroDocDate"></div>
+        </div>
+      </div>
+      <div class="doc-title">Contrato de Proteção de Negócio</div>
+      <div class="doc-clauses">
+        <div class="doc-clause highlight">
+          <span class="doc-clause-num">Art. 1º</span>
+          <span class="doc-clause-text"><strong>As partes acordam</strong> que toda relação comercial merece clareza, proteção e confiança mútua desde o primeiro momento.</span>
+        </div>
+        <div class="doc-clause">
+          <span class="doc-clause-num">Art. 2º</span>
+          <span class="doc-clause-text">Fica estabelecido que contratos simples <strong>não significam</strong> contratos frágeis. A PACTUM garante ambos.</span>
+        </div>
+        <div class="doc-clause">
+          <span class="doc-clause-num">Art. 3º</span>
+          <span class="doc-clause-text">O cliente terá pleno entendimento de <strong>cada cláusula</strong>, sem juridiquês, sem surpresas.</span>
+        </div>
+        <div class="doc-clause">
+          <span class="doc-clause-num">§ único</span>
+          <span class="doc-clause-text">Em caso de conflito, a PACTUM estará ao seu lado na defesa de seus direitos contratuais.</span>
+        </div>
+      </div>
+      <hr class="doc-divider">
+      <div class="doc-sigs">
+        <div class="doc-sig-line">
+          <svg class="sig-svg" viewBox="0 0 80 30"><path class="sig-path" d="M5,22 C15,8 20,24 30,18 C38,13 40,22 50,16 C58,11 62,20 75,14"/></svg>
+          <div class="doc-sig-label">PACTUM</div>
+        </div>
+        <div class="doc-sig-line">
+          <svg class="sig-svg" viewBox="0 0 80 30" style="animation-delay:1.2s"><path class="sig-path" d="M5,20 C12,10 18,26 28,15 C36,8 42,24 52,18 C60,13 66,22 75,16" style="animation-delay:1.2s"/></svg>
+          <div class="doc-sig-label">VOCÊ</div>
+        </div>
+      </div>
+      <div class="doc-seal">PACTUM<br>2025</div>
+    </div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <div class="t-item">Contratos Empresariais <span class="t-sep">◆</span></div>
+    <div class="t-item">Revisão Contratual <span class="t-sep">◆</span></div>
+    <div class="t-item">Consultoria Preventiva <span class="t-sep">◆</span></div>
+    <div class="t-item">Resolução Extrajudicial <span class="t-sep">◆</span></div>
+    <div class="t-item">Acordos Societários <span class="t-sep">◆</span></div>
+    <div class="t-item">Contratos de Serviço <span class="t-sep">◆</span></div>
+    <div class="t-item">Due Diligence Contratual <span class="t-sep">◆</span></div>
+    <div class="t-item">Proteção de Negócios <span class="t-sep">◆</span></div>
+    <div class="t-item">Contratos Empresariais <span class="t-sep">◆</span></div>
+    <div class="t-item">Revisão Contratual <span class="t-sep">◆</span></div>
+    <div class="t-item">Consultoria Preventiva <span class="t-sep">◆</span></div>
+    <div class="t-item">Resolução Extrajudicial <span class="t-sep">◆</span></div>
+    <div class="t-item">Acordos Societários <span class="t-sep">◆</span></div>
+    <div class="t-item">Contratos de Serviço <span class="t-sep">◆</span></div>
+    <div class="t-item">Due Diligence Contratual <span class="t-sep">◆</span></div>
+    <div class="t-item">Proteção de Negócios <span class="t-sep">◆</span></div>
+  </div>
+</div>
+
+<!-- ══ CLÁUSULAS INTERATIVAS ══ -->
+<div class="sec-clausulas reveal" id="clausulas">
+  <div class="clausulas-wrap">
+    <div class="cl-left">
+      <div class="cl-left-c">
+        <div class="s-eye light">Como funciona</div>
+        <h2 class="s-h light" style="color:var(--cream);">Cada serviço<br>é uma <em style="color:var(--gold);">cláusula</em><br style="color:var(--cream);">de proteção.</h2>
+        <p class="s-p light">Selecione abaixo o que sua situação exige. O contrato ao lado se completa em tempo real — assim como a sua proteção.</p>
+        <div class="clause-acc">
+          <div class="clause-item open" data-clause="1">
+            <button class="clause-btn" onclick="toggleClause(this)">
+              <div class="clause-btn-left"><span class="clause-num">Art. I</span><span class="clause-btn-title">Elaboração de contratos</span></div>
+              <span class="clause-arrow">+</span>
+            </button>
+            <div class="clause-body"><p class="clause-body-text">Criamos contratos personalizados do zero: serviços, parceria, locação, prestação e muito mais. Linguagem clara, proteção sólida.</p></div>
+          </div>
+          <div class="clause-item" data-clause="2">
+            <button class="clause-btn" onclick="toggleClause(this)">
+              <div class="clause-btn-left"><span class="clause-num">Art. II</span><span class="clause-btn-title">Revisão e blindagem</span></div>
+              <span class="clause-arrow">+</span>
+            </button>
+            <div class="clause-body"><p class="clause-body-text">Você tem um contrato e quer saber se está seguro? Identificamos brechas, cláusulas abusivas e pontos de risco — antes que eles se tornem problemas.</p></div>
+          </div>
+          <div class="clause-item" data-clause="3">
+            <button class="clause-btn" onclick="toggleClause(this)">
+              <div class="clause-btn-left"><span class="clause-num">Art. III</span><span class="clause-btn-title">Consultoria preventiva</span></div>
+              <span class="clause-arrow">+</span>
+            </button>
+            <div class="clause-body"><p class="clause-body-text">Antes de fechar qualquer negócio, conversamos sobre os riscos. Uma hora de consultoria pode evitar meses de conflito.</p></div>
+          </div>
+          <div class="clause-item" data-clause="4">
+            <button class="clause-btn" onclick="toggleClause(this)">
+              <div class="clause-btn-left"><span class="clause-num">Art. IV</span><span class="clause-btn-title">Resolução extrajudicial</span></div>
+              <span class="clause-arrow">+</span>
+            </button>
+            <div class="clause-body"><p class="clause-body-text">Conflito contratual não precisa virar processo. Mediamos acordos rápidos, econômicos e que preservam relações comerciais.</p></div>
+          </div>
+          <div class="clause-item" data-clause="5">
+            <button class="clause-btn" onclick="toggleClause(this)">
+              <div class="clause-btn-left"><span class="clause-num">Art. V</span><span class="clause-btn-title">Contratos societários</span></div>
+              <span class="clause-arrow">+</span>
+            </button>
+            <div class="clause-body"><p class="clause-body-text">Constituição, alteração e dissolução de sociedades. Acordos de sócios que previnem conflitos antes que eles aconteçam.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Mini contract preview -->
+    <div class="cl-right">
+      <div class="cl-right-lines"></div>
+      <div class="mini-contract">
+        <div class="mc-status draft" id="mcStatus">rascunho</div>
+        <div class="mc-header">
+          <div class="mc-logo">PACTUM<span>.</span></div>
+          <div class="mc-num">Nº 2025/<span id="mcNum">001</span></div>
+        </div>
+        <div class="mc-title">Contrato de Proteção Personalizado</div>
+        <div class="mc-clauses" id="mcClauses">
+          <div class="mc-clause active">
+            <span class="mc-clause-n">I.</span>
+            <span>Elaboração de contrato personalizado conforme necessidade do cliente.</span>
+          </div>
+          <div class="mc-clause">
+            <span class="mc-clause-n">—</span>
+            <span style="color:rgba(28,43,26,.25);font-style:italic;">Selecione uma cláusula para adicionar...</span>
+          </div>
+        </div>
+        <div class="mc-sig-area">
+          <div class="mc-sig-block">
+            <div class="mc-sig-line"></div>
+            <div class="mc-sig-lbl">PACTUM</div>
+          </div>
+          <div style="font-size:9px;color:rgba(28,43,26,.3);font-style:italic;font-family:'DM Serif Display',serif;">aguardando assinatura</div>
+          <div class="mc-sig-block">
+            <div class="mc-sig-line"></div>
+            <div class="mc-sig-lbl">Cliente</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ POR QUE PACTUM ══ -->
+<section class="sec-porque reveal" id="porque">
+  <div class="porq-head">
+    <div>
+      <div class="s-eye">Os três pilares</div>
+      <h2 class="s-h">Clareza. Confiança.<br><em>Crescimento.</em></h2>
+    </div>
+    <p class="s-p">Não somos um escritório de advocacia tradicional. Somos especialistas em contratos que fazem negócios funcionarem — sem complicação, sem juridiquês, sem surpresas.</p>
+  </div>
+  <div class="porq-grid">
+    <div class="porq-card reveal r1">
+      <div class="porq-num">01</div>
+      <span class="porq-ico">📄</span>
+      <div class="porq-title">Simplificamos sem fragilizar</div>
+      <p class="porq-desc">Linguagem acessível não significa proteção menor. Nossos contratos são claros para você e sólidos diante de qualquer tribunal.</p>
+    </div>
+    <div class="porq-card reveal r2">
+      <div class="porq-num">02</div>
+      <span class="porq-ico">🤝</span>
+      <div class="porq-title">Protegemos relações</div>
+      <p class="porq-desc">Um bom contrato não é uma arma — é a base de uma parceria. Estruturamos acordos que fortalecem, não afastam.</p>
+    </div>
+    <div class="porq-card reveal r3">
+      <div class="porq-num">03</div>
+      <span class="porq-ico">✨</span>
+      <div class="porq-title">Crescimento com segurança</div>
+      <p class="porq-desc">Cada negócio fechado com um bom contrato é um passo seguro. Acompanhamos o crescimento da sua empresa com a proteção jurídica que ela precisa.</p>
+    </div>
+    <div class="porq-card reveal r1">
+      <div class="porq-num">04</div>
+      <span class="porq-ico">⚡</span>
+      <div class="porq-title">Agilidade real</div>
+      <p class="porq-desc">Sabemos que negócios não esperam. Entregas rápidas, comunicação direta, sem enrolação burocrática.</p>
+    </div>
+    <div class="porq-card reveal r2">
+      <div class="porq-num">05</div>
+      <span class="porq-ico">🔍</span>
+      <div class="porq-title">Prevenção antes da crise</div>
+      <p class="porq-desc">A consultoria preventiva evita que pequenos problemas virem processos. Diagnóstico antes de assinar qualquer coisa.</p>
+    </div>
+    <div class="porq-card reveal r3">
+      <div class="porq-num">06</div>
+      <span class="porq-ico">💬</span>
+      <div class="porq-title">Atendemos pessoa física e jurídica</div>
+      <p class="porq-desc">Do freelancer ao empresário. Do contrato de serviço ao acordo societário complexo. Estamos preparados para os dois mundos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SERVIÇOS ══ -->
+<div class="sec-servicos reveal" id="servicos">
+  <div class="servicos-wrap">
+    <div class="serv-left">
+      <div class="s-eye light">Cláusulas de serviço</div>
+      <h2 class="s-h light" style="color:var(--cream);font-size:clamp(30px,2.8vw,46px);">O que a<br>PACTUM<br><em>entrega.</em></h2>
+      <p class="s-p light" style="margin-top:20px;">Cada serviço é estruturado como uma cláusula no contrato de proteção do seu negócio.</p>
+      <div style="margin-top:36px;"><a href="#contato" class="btn-gold">Contratar agora →</a></div>
+    </div>
+    <div class="serv-right">
+      <div class="serv-contract">
+        <div class="serv-contract-header">
+          <div class="sch-title">Anexo de Serviços — PACTUM Soluções Contratuais</div>
+          <div class="sch-num">Rev. 2025</div>
+        </div>
+        <div class="serv-item">
+          <div class="serv-art">Art. 1º</div>
+          <div class="serv-content">
+            <div class="serv-title">Elaboração de Contratos</div>
+            <div class="serv-desc">Criação de contratos personalizados do zero. Serviços, parceria, locação, prestação, franquia, influencer, freelancer e muito mais — sempre em linguagem clara.</div>
+            <div class="serv-tags"><span class="serv-tag">Pessoa Física</span><span class="serv-tag">Empresa</span><span class="serv-tag">Freelancer</span><span class="serv-tag">Entrega rápida</span></div>
+          </div>
+        </div>
+        <div class="serv-item">
+          <div class="serv-art">Art. 2º</div>
+          <div class="serv-content">
+            <div class="serv-title">Revisão & Blindagem</div>
+            <div class="serv-desc">Análise detalhada de contratos existentes para identificar brechas, cláusulas abusivas e pontos de vulnerabilidade. Você assina sabendo exatamente o que está aceitando.</div>
+            <div class="serv-tags"><span class="serv-tag">Diagnóstico</span><span class="serv-tag">Relatório</span><span class="serv-tag">Blindagem</span></div>
+          </div>
+        </div>
+        <div class="serv-item">
+          <div class="serv-art">Art. 3º</div>
+          <div class="serv-content">
+            <div class="serv-title">Consultoria Preventiva</div>
+            <div class="serv-desc">Sessão estratégica antes de fechar qualquer negócio. Identificamos riscos, estruturamos a negociação e protegemos seus interesses antes da assinatura.</div>
+            <div class="serv-tags"><span class="serv-tag">1h de sessão</span><span class="serv-tag">Online</span><span class="serv-tag">Presencial</span></div>
+          </div>
+        </div>
+        <div class="serv-item">
+          <div class="serv-art">Art. 4º</div>
+          <div class="serv-content">
+            <div class="serv-title">Resolução Extrajudicial</div>
+            <div class="serv-desc">Conflito contratual? Mediamos acordos sem processo judicial — mais rápido, mais barato e preservando a relação entre as partes.</div>
+            <div class="serv-tags"><span class="serv-tag">Mediação</span><span class="serv-tag">Negociação</span><span class="serv-tag">Acordo</span></div>
+          </div>
+        </div>
+        <div class="serv-item">
+          <div class="serv-art">Art. 5º</div>
+          <div class="serv-content">
+            <div class="serv-title">Contratos Societários</div>
+            <div class="serv-desc">Acordo de sócios, constituição, alteração e dissolução de empresas. Estruturamos a governança da sua sociedade para prevenir conflitos antes que eles comecem.</div>
+            <div class="serv-tags"><span class="serv-tag">Acordo de Sócios</span><span class="serv-tag">Abertura</span><span class="serv-tag">Governança</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DIAGNÓSTICO DE RISCO ══ -->
+<div class="sec-risco reveal" id="risco">
+  <div class="risco-split">
+    <div class="risco-left">
+      <div class="risco-left-c">
+        <div class="s-eye">Diagnóstico contratual</div>
+        <h2 class="s-h">Seu negócio<br>está <em>exposto</em><br>sem saber.</h2>
+        <p class="s-p">A maioria das empresas tem pelo menos um contrato crítico com brechas que podem custar caro. Veja os riscos mais comuns:</p>
+        <div class="risk-meter">
+          <div class="rm-title">Índice de risco contratual — Brasil 2025</div>
+          <div class="risk-items">
+            <div class="risk-row">
+              <div class="risk-row-head"><span class="risk-label">Contratos de serviço sem proteção</span><span class="risk-pct" style="color:#e74c3c;">87%</span></div>
+              <div class="risk-bar"><div class="risk-fill rf-high" id="rf1" style="width:0%"></div></div>
+            </div>
+            <div class="risk-row">
+              <div class="risk-row-head"><span class="risk-label">Acordos verbais não formalizados</span><span class="risk-pct" style="color:var(--gold);">64%</span></div>
+              <div class="risk-bar"><div class="risk-fill rf-mid" id="rf2" style="width:0%"></div></div>
+            </div>
+            <div class="risk-row">
+              <div class="risk-row-head"><span class="risk-label">Cláusulas abusivas não identificadas</span><span class="risk-pct" style="color:#e74c3c;">71%</span></div>
+              <div class="risk-bar"><div class="risk-fill rf-high" id="rf3" style="width:0%"></div></div>
+            </div>
+            <div class="risk-row">
+              <div class="risk-row-head"><span class="risk-label">Empresas com revisão jurídica regular</span><span class="risk-pct" style="color:var(--sage);">18%</span></div>
+              <div class="risk-bar"><div class="risk-fill rf-low" id="rf4" style="width:0%"></div></div>
+            </div>
+          </div>
+          <div class="risk-verdict">"Antes de assinar qualquer contrato, você sabe quais riscos está correndo?"</div>
+        </div>
+        <div style="margin-top:28px;"><a href="#contato" class="btn-txt-forest">Quero um diagnóstico gratuito →</a></div>
+      </div>
+    </div>
+    <div class="risco-right">
+      <div class="s-eye">Sinais de alerta</div>
+      <h2 class="s-h">Quando você<br>precisa da <em>PACTUM</em><br>agora.</h2>
+      <div class="risk-checks">
+        <div class="rc-item"><div class="rc-icon danger">⚠️</div><div><div class="rc-title">Está prestes a fechar um negócio importante</div><div class="rc-desc">Todo acordo grande merece proteção jurídica antes da assinatura. Uma hora de consultoria pode evitar meses de dor de cabeça.</div></div></div>
+        <div class="rc-item"><div class="rc-icon warn">📋</div><div><div class="rc-title">Tem contratos que nunca revisou</div><div class="rc-desc">Contratos antigos acumulam riscos. Cláusulas que não funcionam mais, obrigações esquecidas, brechas que o outro lado pode usar contra você.</div></div></div>
+        <div class="rc-item"><div class="rc-icon danger">🤝</div><div><div class="rc-title">Vai entrar em uma sociedade</div><div class="rc-desc">Acordos de sócios mal estruturados são a maior causa de conflitos empresariais. Defina regras do jogo antes de começar.</div></div></div>
+        <div class="rc-item"><div class="rc-icon warn">💼</div><div><div class="rc-title">Atende clientes sem contrato formal</div><div class="rc-desc">Prestadores de serviço sem contrato ficam à mercê de clientes que não pagam, mudam o escopo ou negam combinados verbais.</div></div></div>
+        <div class="rc-item"><div class="rc-icon safe">✅</div><div><div class="rc-title">Quer crescer com segurança jurídica</div><div class="rc-desc">Empresas que crescem rápido sem estrutura contratual ficam vulneráveis. Proteja o que você está construindo.</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ QUEM SOMOS ══ -->
+<section class="sec-quem reveal" id="quem">
+  <div class="quem-grid">
+    <div class="quem-visual">
+      <div class="quem-frame">
+        <div class="qf-bg"></div>
+        <div class="qf-inner">
+          <span class="qf-placeholder">⚖️</span>
+          <span class="qf-lbl">Foto da equipe PACTUM</span>
+        </div>
+        <div class="qf-bottom">
+          <div class="qf-name">PACTUM</div>
+          <div class="qf-role">Soluções Contratuais</div>
+        </div>
+      </div>
+      <div class="years-badge"><div class="yb-val">100<sup style="font-size:14px;">+</sup></div><div class="yb-lbl">contratos<br>resolvidos</div></div>
+    </div>
+    <div>
+      <div class="s-eye">Quem somos</div>
+      <h2 class="s-h">Acreditamos que<br>todo negócio<br><em>merece clareza.</em></h2>
+      <p class="manifesto">"Um contrato não é um obstáculo. É a garantia de que você crescerá com tranquilidade."</p>
+      <p class="s-p">A PACTUM nasceu da frustração com o juridiquês desnecessário e contratos que só servem para complicar. Simplificamos a parte jurídica para que você possa focar no que realmente importa: fazer seu negócio crescer.</p>
+      <div class="values-list">
+        <div class="val-item"><div class="val-ico">📝</div><div><div class="val-title">Simplificamos sem fragilizar</div><div class="val-desc">Clareza não significa vulnerabilidade. Nossos contratos são acessíveis para você e sólidos juridicamente.</div></div></div>
+        <div class="val-item"><div class="val-ico">🛡️</div><div><div class="val-title">Protegemos relações e negócios</div><div class="val-desc">Atendemos empresas e pessoas físicas nos mais diversos litígios e contratos extrajudiciais.</div></div></div>
+        <div class="val-item"><div class="val-ico">🌱</div><div><div class="val-title">Crescimento para você</div><div class="val-desc">Cada contrato que fechamos é um passo seguro na sua jornada de crescimento empresarial.</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DEPOIMENTOS ══ -->
+<section class="sec-dep reveal" id="depoimentos">
+  <div class="dep-head">
+    <div>
+      <div class="s-eye light">O que dizem</div>
+      <h2 class="s-h light" style="color:var(--cream);">Contratos que<br><em>realmente funcionaram.</em></h2>
+    </div>
+    <a href="https://instagram.com/pactumsol" target="_blank" class="btn-txt-gold">Ver no Instagram →</a>
+  </div>
+  <div class="dep-grid">
+    <div class="dep-card reveal r1">
+      <p class="dep-text">"Tinha medo de formalizar acordos — achava que ia complicar. A PACTUM fez exatamente o oposto: simplificou tudo e ainda me explicou cada ponto. Hoje todos os meus clientes têm contrato."</p>
+      <div class="dep-author"><div class="dep-init">M</div><div><div class="dep-name">Marcos A.</div><div class="dep-role">Designer freelancer</div></div></div>
+    </div>
+    <div class="dep-card reveal r2">
+      <p class="dep-text">"Quase perdi uma sociedade por falta de um acordo de sócios claro. A consultoria preventiva da PACTUM identificou os riscos antes de acontecer. Valeu cada centavo."</p>
+      <div class="dep-author"><div class="dep-init">C</div><div><div class="dep-name">Carla M.</div><div class="dep-role">Co-fundadora de startup</div></div></div>
+    </div>
+    <div class="dep-card reveal r3">
+      <p class="dep-text">"Revisaram um contrato que eu ia assinar e encontraram três cláusulas que me colocariam em desvantagem total. Saí da reunião aliviado e muito mais seguro para negociar."</p>
+      <div class="dep-author"><div class="dep-init">R</div><div><div class="dep-name">Rafael T.</div><div class="dep-role">Empresário, setor de serviços</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ ══ -->
+<section class="sec-faq reveal">
+  <div class="faq-layout">
+    <div>
+      <div class="s-eye">Dúvidas</div>
+      <h2 class="s-h">Perguntas<br>que todo<br><em>cliente faz.</em></h2>
+      <div style="margin-top:32px;"><a href="#contato" class="btn-gold">Falar agora →</a></div>
+    </div>
+    <div class="faq-items">
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Por que preciso de contrato se confio no cliente? <span class="faq-icon">+</span></button><div class="faq-a">Contratos não são sinais de desconfiança — são proteção para ambos os lados. Quando tudo vai bem, o contrato fica na gaveta. Quando algo dá errado, ele é o que garante que você não perde dinheiro ou relacionamentos.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Quanto tempo leva para ter um contrato pronto? <span class="faq-icon">+</span></button><div class="faq-a">Depende da complexidade. Contratos simples de serviço podem ser entregues em 24-48h. Contratos societários complexos levam mais tempo — mas sempre com prazo definido antes de começar.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Atendem pessoa física ou só empresa? <span class="faq-icon">+</span></button><div class="faq-a">Os dois! Atendemos freelancers, autônomos, profissionais liberais e empresas de todos os tamanhos. Do contrato de serviço simples ao acordo societário complexo.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">O atendimento é online ou presencial? <span class="faq-icon">+</span></button><div class="faq-a">Atendemos das duas formas. A maioria dos serviços é realizada online com total eficiência. Para clientes que preferem presencialmente, temos estrutura para isso também.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">O que é a consultoria preventiva? <span class="faq-icon">+</span></button><div class="faq-a">É uma sessão estratégica antes de você assinar ou fechar qualquer negócio importante. Analisamos o cenário, identificamos riscos e estruturamos a negociação do seu lado. Uma hora bem investida que pode evitar meses de problema.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Vocês resolvem conflitos sem ir a juízo? <span class="faq-icon">+</span></button><div class="faq-a">Sim! A resolução extrajudicial é mais rápida, mais barata e preserva relações. Mediamos acordos que funcionam para as duas partes — sem a demora e o custo de um processo judicial.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTATO ══ -->
+<div class="sec-contato reveal" id="contato">
+  <div class="contato-wrap">
+    <div class="cont-left">
+      <div class="cont-left-c">
+        <div class="s-eye light">Fale com a PACTUM</div>
+        <h2 class="s-h light" style="color:var(--cream);">Vamos montar<br>seu contrato<br><em>agora.</em></h2>
+        <p class="s-p light">Sem enrolação. Você descreve a sua necessidade, a gente resolve — com clareza, agilidade e a proteção que você merece.</p>
+        <div class="cont-infos">
+          <div class="c-info"><div class="c-ico">📲</div><div><div class="c-lbl">WhatsApp</div><div class="c-val">(61) 9 9451-1685</div></div></div>
+          <div class="c-info"><div class="c-ico">📸</div><div><div class="c-lbl">Instagram</div><div class="c-val">@pactumsol</div></div></div>
+          <div class="c-info"><div class="c-ico">🧵</div><div><div class="c-lbl">Threads</div><div class="c-val">@pactumsol</div></div></div>
+          <div class="c-info"><div class="c-ico">⏰</div><div><div class="c-lbl">Resposta</div><div class="c-val">Em até 2 horas úteis</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cont-right">
+      <div class="c-form-wrap">
+        <div class="c-form-header">
+          <div class="cfh-title">Formulário de Solicitação Contratual</div>
+          <div class="cfh-date" id="formDate"></div>
+        </div>
+        <form class="c-form" onsubmit="handleForm(event)">
+          <div class="c-row">
+            <div class="c-group"><label class="c-flbl">Nome completo</label><input type="text" class="c-inp" placeholder="Seu nome" required></div>
+            <div class="c-group"><label class="c-flbl">WhatsApp</label><input type="tel" class="c-inp" placeholder="(00) 9 0000-0000"></div>
+          </div>
+          <div class="c-group"><label class="c-flbl">E-mail</label><input type="email" class="c-inp" placeholder="seu@email.com" required></div>
+          <div class="c-group">
+            <label class="c-flbl">Tipo de solicitação</label>
+            <select class="c-sel">
+              <option value="" disabled selected>Selecione o serviço</option>
+              <option>Elaboração de contrato</option>
+              <option>Revisão e blindagem de contrato</option>
+              <option>Consultoria preventiva</option>
+              <option>Resolução extrajudicial de conflito</option>
+              <option>Contrato / Acordo societário</option>
+              <option>Não sei — quero orientação</option>
+            </select>
+          </div>
+          <div class="c-group"><label class="c-flbl">Descreva brevemente o que você precisa</label><textarea class="c-ta" placeholder="Conte um pouco sobre a situação..."></textarea></div>
+          <div class="c-btns">
+            <button type="submit" class="c-sub" id="formBtn">Enviar solicitação ✍️</button>
+            <a href="https://wa.me/5561994511685?text=Olá!%20Preciso%20de%20ajuda%20com%20um%20contrato." target="_blank" class="c-wa">💬 WhatsApp</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CTA FINAL ══ -->
+<section class="sec-cta reveal">
+  <div class="s-eye" style="justify-content:center;color:var(--sage);">Próximo passo</div>
+  <h2 class="s-h" style="margin:0 auto 16px;">Todo negócio começa<br>com um <em>acordo claro.</em></h2>
+  <p class="s-p" style="text-align:center;margin:0 auto;">Não deixe para depois. Um contrato bem feito hoje é a diferença entre crescer com segurança ou apagar incêndios amanhã.</p>
+  <div class="cta-btns">
+    <a href="#contato" class="btn-gold">Quero meu contrato agora ✍️</a>
+    <a href="https://wa.me/5561994511685" target="_blank" class="btn-ghost-dark">💬 Falar no WhatsApp</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fl">PACTUM<span>.</span><small>Soluções Contratuais · Clareza que fecha negócios</small></div>
+  <div class="fl-copy">© 2026 PACTUM Soluções Contratuais.<br>Simplificando contratos. Fortalecendo negócios.</div>
+  <nav class="fl-nav">
+    <a href="#clausulas">O que fazemos</a>
+    <a href="#servicos">Serviços</a>
+    <a href="#quem">Quem somos</a>
+    <a href="#depoimentos">Clientes</a>
+    <a href="#contato">Contato</a>
+  </nav>
+</footer>
+
+<script>
+/* ── PEN CURSOR ── */
+const pen = document.getElementById('pen');
+const ink = document.getElementById('pen-ink');
+let mx=0, my=0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  pen.style.left = mx + 'px';
+  pen.style.top  = my + 'px';
+  ink.style.left = mx + 'px';
+  ink.style.top  = my + 'px';
+});
+document.querySelectorAll('a, button, .porq-card, .dep-card, .rc-item, .val-item').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    pen.style.transform = 'translate(-4px,-28px) scale(1.3) rotate(-15deg)';
+    ink.style.width = '12px'; ink.style.height = '12px';
+    ink.style.background = 'var(--sage)'; ink.style.boxShadow = '0 0 12px var(--sage)';
+  });
+  el.addEventListener('mouseleave', () => {
+    pen.style.transform = 'translate(-4px,-28px)';
+    ink.style.width = '4px'; ink.style.height = '4px';
+    ink.style.background = 'var(--gold)'; ink.style.boxShadow = '0 0 8px var(--gold)';
+  });
+});
+
+/* ── NAV ── */
+window.addEventListener('scroll', () => document.getElementById('nav').classList.toggle('scrolled', scrollY > 50));
+
+/* ── MOBILE MENU ── */
+function openMob()  { document.getElementById('mob').classList.add('open');  document.body.style.overflow='hidden'; }
+function closeMob() { document.getElementById('mob').classList.remove('open'); document.body.style.overflow=''; }
+
+/* ── DATES ── */
+const now = new Date();
+const dateStr = now.toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+const dateShort = now.toLocaleDateString('pt-BR');
+const el1 = document.getElementById('heroDocDate');
+const el2 = document.getElementById('formDate');
+if(el1) el1.textContent = dateStr;
+if(el2) el2.textContent = dateShort;
+
+/* ── REVEAL ── */
+const obs = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('v'); }), { threshold: .05 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+/* ── RISK BARS (animate on scroll) ── */
+const riskObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      setTimeout(() => { document.getElementById('rf1').style.width = '87%'; }, 100);
+      setTimeout(() => { document.getElementById('rf2').style.width = '64%'; }, 200);
+      setTimeout(() => { document.getElementById('rf3').style.width = '71%'; }, 300);
+      setTimeout(() => { document.getElementById('rf4').style.width = '18%'; }, 400);
+      riskObs.unobserve(e.target);
+    }
+  });
+}, { threshold: .3 });
+const riskEl = document.querySelector('.risk-meter');
+if(riskEl) riskObs.observe(riskEl);
+
+/* ── INTERACTIVE CLAUSE ACCORDION ── */
+const clauseData = {
+  '1': { n: '001', text: 'Elaboração de contrato personalizado conforme necessidade do cliente, em linguagem acessível e com proteção sólida.' },
+  '2': { n: '002', text: 'Revisão e blindagem de contrato existente: identificação de brechas, cláusulas abusivas e pontos de vulnerabilidade.' },
+  '3': { n: '003', text: 'Consultoria preventiva antes do fechamento do negócio, com análise de riscos e estruturação da negociação.' },
+  '4': { n: '004', text: 'Resolução extrajudicial de conflito contratual mediante mediação, negociação e elaboração de acordo entre as partes.' },
+  '5': { n: '005', text: 'Estruturação de contrato societário / acordo de sócios com regras de governança e prevenção de conflitos.' }
+};
+
+function toggleClause(btn) {
+  const item = btn.closest('.clause-item');
+  const allItems = document.querySelectorAll('.clause-item');
+  const wasOpen = item.classList.contains('open');
+  allItems.forEach(i => i.classList.remove('open'));
+  if(!wasOpen) {
+    item.classList.add('open');
+    const id = item.getAttribute('data-clause');
+    updateMiniContract(id);
+  }
+}
+
+function updateMiniContract(id) {
+  const data = clauseData[id];
+  if(!data) return;
+  const numEl = document.getElementById('mcNum');
+  const clausesEl = document.getElementById('mcClauses');
+  const statusEl = document.getElementById('mcStatus');
+  if(numEl) numEl.textContent = data.n;
+  if(clausesEl) {
+    clausesEl.innerHTML = `
+      <div class="mc-clause active">
+        <span class="mc-clause-n">${['I','II','III','IV','V'][id-1]}.</span>
+        <span>${data.text}</span>
+      </div>
+      <div class="mc-clause">
+        <span class="mc-clause-n" style="color:rgba(28,43,26,.25);">—</span>
+        <span style="color:rgba(28,43,26,.25);font-style:italic;">Cláusulas adicionais conforme necessidade...</span>
+      </div>`;
+  }
+  if(statusEl) {
+    statusEl.textContent = 'em elaboração';
+    statusEl.className = 'mc-status ready';
+    setTimeout(() => {
+      statusEl.textContent = 'pronto para assinar';
+    }, 1200);
+  }
+}
+
+/* ── FAQ ── */
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const open = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if(!open) item.classList.add('open');
+}
+
+/* ── FORM ── */
+function handleForm(e) {
+  e.preventDefault();
+  const btn = document.getElementById('formBtn');
+  btn.textContent = 'Solicitação enviada ✓';
+  btn.style.background = 'var(--sage)';
+  setTimeout(() => { btn.textContent = 'Enviar solicitação ✍️'; btn.style.background = ''; e.target.reset(); }, 3500);
+}
+</script>
+</body>
+</html>
